@@ -8,7 +8,6 @@ metadata {
     capability "Switch Level"
   }
 
-
   simulator {
   }
 
@@ -32,8 +31,21 @@ metadata {
 }
 
 def parse(String description) {
-  log.debug("Parsing '${description}'")
+    def result = null
+    def cmd = zwave.parse(description)
 
+    if (cmd) {
+        result = zwaveEvent(cmd)
+        log.debug("Parsed ${cmd} to ${result.inspect()}")
+    } else {
+        log.debug("Non-parsed event: ${description}")
+    }
+
+    return result
+}
+
+def zwaveEvent(physicalgraph.zwave.commands.switchbinaryv1.SwitchBinaryReport cmd) {
+  log.debug("Report!")
 }
 
 def setLevel() {
