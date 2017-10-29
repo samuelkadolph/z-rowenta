@@ -12,21 +12,29 @@ metadata {
   }
 
   tiles {
-    standardTile("switch", "device.switch", width: 2, height: 2) {
-      state "off", label:'${name}', action:"switch.on", icon:"st.switches.switch.off", backgroundColor:"#ffffff", nextState:"turningOn"
-      state "on", label:'${name}', action:"switch.off", icon:"st.switches.switch.on", backgroundColor:"#00A0DC", nextState:"turningOff"
-      state "turningOn", label:'${name}', icon:"st.switches.switch.on", backgroundColor:"#00A0DC"
-      state "turningOff", label:'${name}', icon:"st.switches.switch.off", backgroundColor:"#ffffff"
+    standardTile("switch", "device.switch", width: 6, height: 2, canChangeIcon: true) {
+      state "off", label:'${name}', action:"switch.on", icon:"st.Appliances.appliances11", backgroundColor:"#ffffff", nextState:"turningOn"
+      state "on", label:'${name}', action:"switch.off", icon:"st.Appliances.appliances11", backgroundColor:"#00A0DC", nextState:"turningOff"
+      state "turningOn", label:'${name}', icon:"st.Appliances.appliances11", backgroundColor:"#00A0DC"
+      state "turningOff", label:'${name}', icon:"st.Appliances.appliances11", backgroundColor:"#ffffff"
     }
-    controlTile("levelSliderControl", "device.level", "slider", height: 2, width: 1, inactiveLabel: false) {
-      state "level", action:"setLevel"
+
+    standardTile("low", "device.switch", inactiveLabel: false, decoration: "flat") {
+      state "default", label:"Low", action:"refresh"
     }
-    standardTile("refresh", "device.switch", inactiveLabel: false, decoration: "flat") {
-      state "default", label:"", action:"refresh", icon:"st.secondary.refresh"
+    standardTile("medium", "device.switch", inactiveLabel: false, decoration: "flat") {
+      state "default", label:"Medium", action:"refresh"
+    }
+    standardTile("high", "device.switch", inactiveLabel: false, decoration: "flat") {
+      state "default", label:"High", action:"refresh"
+    }
+
+    standardTile("boost", "device.switch", inactiveLabel: false, decoration: "flat") {
+      state "default", label:"Boost", action:"refresh"
     }
 
     main "switch"
-    details "switch", "levelSliderControl", "refresh"
+    details "switch", "low", "medium", "high", "boost"
   }
 }
 
