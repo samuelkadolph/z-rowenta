@@ -48,6 +48,10 @@ def zwaveEvent(physicalgraph.zwave.commands.switchbinaryv1.SwitchBinaryReport cm
   log.debug("Report!")
 }
 
-def setLevel() {
-  log.debug("Executing 'setLevel'")
+def zwaveEvent(physicalgraph.zwave.commands.switchmultilevelv3.SwitchMultilevelReport cmd) {
+  log.debug("level = ${cmd.value}")
+}
+
+def setLevel(value) {
+  log.debug("Executing 'setLevel('${value}')")
 }
