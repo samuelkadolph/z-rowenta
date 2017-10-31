@@ -3,9 +3,10 @@
  *
  *  Copyright 2017 Samuel Kadolph
  */
+
 metadata {
   definition (name: "Rowenta Fan", namespace: "z-rowenta", author: "samuelkadolph") {
-  	capability "Switch"
+    capability "Switch"
 
     attribute "fanSpeed", "enum", ["low", "medium", "high", "boost"]
 
@@ -89,16 +90,16 @@ def parse(String description) {
 
 def zwaveEvent(physicalgraph.zwave.commands.switchbinaryv1.SwitchBinaryReport cmd) {
   log.debug("SwitchBinaryReport value='${cmd.value}'")
-  
+
   sendEvent(name: "switch", value: (cmd.value == 0 ? "off" : "on"));
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.switchmultilevelv3.SwitchMultilevelReport cmd) {
   switch(cmd.value) {
-  	case 1: sendEvent(name: "fanSpeed", value: "low"); break;
-  	case 2: sendEvent(name: "fanSpeed", value: "medium"); break;
-  	case 3: sendEvent(name: "fanSpeed", value: "high"); break;
-  	case 4: sendEvent(name: "fanSpeed", value: "boost"); break;
+    case 1: sendEvent(name: "fanSpeed", value: "low"); break;
+    case 2: sendEvent(name: "fanSpeed", value: "medium"); break;
+    case 3: sendEvent(name: "fanSpeed", value: "high"); break;
+    case 4: sendEvent(name: "fanSpeed", value: "boost"); break;
   }
 
   log.debug("SwitchMultilevelReport value='${cmd.value}'")
