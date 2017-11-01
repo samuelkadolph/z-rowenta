@@ -20,11 +20,13 @@ metadata {
   }
 
   tiles(scale: 2) {
-    standardTile("switch", "device.switch", width: 6, height: 4, canChangeIcon: true) {
-      state "off", label:"OFF", action:"switch.on", icon:"st.Appliances.appliances11", backgroundColor:"#FFFFFF", nextState:"turningOn"
-      state "on", label:"ON", action:"switch.off", icon:"st.Appliances.appliances11", backgroundColor:"#00A0DC", nextState:"turningOff"
-      state "turningOn", label:"TURNINGON", icon:"st.Appliances.appliances11", backgroundColor:"#00A0DC"
-      state "turningOff", label:"TURNINGOFF", icon:"st.Appliances.appliances11", backgroundColor:"#FFFFFF"
+    multiAttributeTile(name: "switch", type:"generic", width: 6, height: 4, canChangeIcon: true, decoration: "flat") {
+      tileAttribute("device.switch", key: "PRIMARY_CONTROL") {
+        attributeState "off", label:"OFF", action:"switch.on", icon:"st.Appliances.appliances11", backgroundColor:"#FFFFFF", nextState:"turningOn"
+        attributeState "on", label:"ON", action:"switch.off", icon:"st.Appliances.appliances11", backgroundColor:"#00A0DC", nextState:"turningOff"
+        attributeState "turningOn", label:"TURNINGON", icon:"st.Appliances.appliances11", backgroundColor:"#00A0DC"
+        attributeState "turningOff", label:"TURNINGOFF", icon:"st.Appliances.appliances11", backgroundColor:"#FFFFFF"
+      }
     }
 
     standardTile("low", "device.fanSpeed", width: 2, height: 2, decoration: "flat") {
@@ -43,8 +45,8 @@ metadata {
       state "high", label:"HIGH", backgroundColor:"#00A0DC"
     }
 
-    valueTile("boost", "device.fanSpeed", width: 2, height: 2, decoration: "flat") {
-      state "not-boost", label:"BOOST", backgroundColor:"#00A0DC", action:"boost", nextState:"changing"
+    standardTile("boost", "device.fanSpeed", width: 2, height: 2, decoration: "flat") {
+      state "not-boost", label:"BOOST", backgroundColor:"#FFFFFF", action:"boost", nextState:"changing"
       state "changing", label:"BOOST", backgroundColor:"#99E4FF"
       state "boost", label:"BOOST", backgroundColor:"#00A0DC"
     }
