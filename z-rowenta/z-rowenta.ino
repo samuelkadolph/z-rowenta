@@ -1,3 +1,4 @@
+// Pin Definitions
 #define LOW_SPEED_PIN 5
 #define MEDIUM_SPEED_PIN 6
 #define HIGH_SPEED_PIN 7
@@ -24,7 +25,6 @@
 #define POWER_CHANNEL 1
 #define SPEED_CHANNEL 2
 
-ZUNO_SETUP_SLEEPING_MODE(ZUNO_SLEEPING_MODE_ALWAYS_AWAKE);
 ZUNO_SETUP_CHANNELS(ZUNO_SWITCH_BINARY(getPower, setPower), ZUNO_SWITCH_MULTILEVEL(getSpeed, setSpeed));
 
 // Fan Microcontroller Constants
@@ -134,12 +134,14 @@ void loop() {
 byte getPower() {
   Serial.print("getPower() = ");
   Serial.println(powerValue);
+
   return powerValue;
 }
 
 byte getSpeed() {
   Serial.print("getSpeed() = ");
   Serial.println(speedValue);
+
   return speedValue;
 }
 
@@ -168,11 +170,6 @@ byte readState() {
   }
 
   return (previousPowerValue != powerValue ? POWER_CHANGED : 0) | (previousSpeedValue != speedValue ? SPEED_CHANGED : 0);
-}
-
-void sendReport() {
-  zunoSendReport(1);
-  zunoSendReport(2);
 }
 
 void setPower(byte value) {
