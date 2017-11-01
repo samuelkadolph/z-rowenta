@@ -7,8 +7,8 @@
 #define SPEED_BUTTON_PIN 24
 
 // Fan Power Values
-#define ON 1
-#define OFF 0
+#define POWER_OFF 0
+#define POWER_ON 1
 
 // Fan Speed Values
 #define LOW_SPEED 1
@@ -60,7 +60,7 @@ void setup() {
 void loop() {
   byte stateChanged = readState();
 
-  if (powerValue == ON) {
+  if (powerValue == POWER_ON) {
     int freq = 500 - (speedValue * 100);
 
     if (millis() % freq < freq / 2) {
@@ -75,8 +75,8 @@ void loop() {
   if ((stateChanged & POWER_CHANGED) == POWER_CHANGED) {
     Serial.print("powerValue = ");
     switch(powerValue) {
-      case ON: Serial.println("1 (ON)"); break;
-      case OFF: Serial.println("0 (OFF)"); break;
+      case POWER_OFF: Serial.println("0 (OFF)"); break;
+      case POWER_ON: Serial.println("1 (ON)"); break;
     }
 
     zunoSendReport(POWER_CHANNEL);
@@ -104,7 +104,7 @@ void loop() {
     changePower = false;
   }
 
-  if (changeSpeed) {
+  if (changeSpeed && powerValue == POWER_ON) {
     if (targetSpeed != speedValue) {
       if (targetSpeed == BOOST_SPEED || speedValue == BOOST_SPEED) {
         digitalWrite(BOOST_BUTTON_PIN, HIGH);
@@ -148,23 +148,23 @@ byte readState() {
   byte previousSpeedValue = speedValue;
 
   if (digitalRead(LOW_SPEED_PIN) == HIGH) {
-    powerValue = ON;
+    powerValue = POWER_ON;
     speedValue = LOW_SPEED;
   }
   else if (digitalRead(MEDIUM_SPEED_PIN) == HIGH) {
-    powerValue = ON;
+    powerValue = POWER_ON;
     speedValue = MEDIUM_SPEED;
   }
   else if (digitalRead(HIGH_SPEED_PIN) == HIGH) {
-    powerValue = ON;
+    powerValue = POWER_ON;
     speedValue = HIGH_SPEED;
   }
   else if (digitalRead(BOOST_SPEED_PIN) == HIGH) {
-    powerValue = ON;
+    powerValue = POWER_ON;
     speedValue = BOOST_SPEED;
   }
   else {
-    powerValue = OFF;
+    powerValue = POWER_OFF;
   }
 
   return (previousPowerValue != powerValue ? POWER_CHANGED : 0) | (previousSpeedValue != speedValue ? SPEED_CHANGED : 0);
@@ -181,13 +181,18 @@ void setPower(byte value) {
   Serial.println(")");
 
   changePower = true;
-  targetPower = value == 0 ? OFF : ON;
+  targetPower = value == 0 ? POWER_OFF : POWER_ON;
 }
 
 void setSpeed(byte value) {
   Serial.print("setSpeed(");
   Serial.print(value);
   Serial.println(")");
+
+  if (powerValue == POWER_OFF) {
+    changePower = true;
+    targetPower = POWER_ON;
+  }
 
   changeSpeed = true;
   targetSpeed = value;
