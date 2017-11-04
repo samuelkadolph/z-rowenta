@@ -27,16 +27,17 @@
 
 ZUNO_SETUP_CHANNELS(ZUNO_SWITCH_BINARY(getPower, setPower), ZUNO_SWITCH_MULTILEVEL(getSpeed, setSpeed));
 
-// Fan Microcontroller Constants
-#define MICRO_WAIT 25
+// Fan Timings
+#define BUTTON_WAIT 25
+#define POWER_ON_DELAY 2500
 
-// Global State
+boolean changePower = false;
+boolean changeSpeed = false;
+unsigned long lastTurnedOnAt = 0;
 byte powerValue = 0;
 byte speedValue = 0;
 byte targetPower = 0;
 byte targetSpeed = 0;
-boolean changePower = false;
-boolean changeSpeed = false;
 
 void setup() {
   pinMode(LOW_SPEED_PIN, INPUT); // INPUT_PULLUP does not work with Pin 5 -- https://forum.z-wave.me/viewtopic.php?f=3427&t=25688
@@ -61,7 +62,7 @@ void loop() {
   byte stateChanged = readState();
 
   if (powerValue == POWER_ON) {
-    int freq = 500 - (speedValue * 100);
+    int freq = 600 - (speedValue * 100);
 
     if (millis() % freq < freq / 2) {
       digitalWrite(13, HIGH);
@@ -73,17 +74,21 @@ void loop() {
   }
 
   if ((stateChanged & POWER_CHANGED) == POWER_CHANGED) {
-    Serial.print("powerValue = ");
+    Serial.print("powerValue is now ");
     switch(powerValue) {
       case POWER_OFF: Serial.println("0 (OFF)"); break;
       case POWER_ON: Serial.println("1 (ON)"); break;
+    }
+
+    if (powerValue == POWER_ON) {
+      lastTurnedOnAt = millis();
     }
 
     zunoSendReport(POWER_CHANNEL);
   }
 
   if ((stateChanged & SPEED_CHANGED) == SPEED_CHANGED) {
-    Serial.print("speedValue = ");
+    Serial.print("speedValue is now ");
     switch(speedValue) {
       case LOW_SPEED: Serial.println("1 (LOW)"); break;
       case MEDIUM_SPEED: Serial.println("2 (MEDIUM)"); break;
@@ -97,31 +102,32 @@ void loop() {
   if (changePower) {
     if (targetPower != powerValue) {
       digitalWrite(ONOFF_BUTTON_PIN, HIGH);
-      delay(MICRO_WAIT);
+      delay(BUTTON_WAIT);
       digitalWrite(ONOFF_BUTTON_PIN, LOW);
+      delay(BUTTON_WAIT);
     }
 
     changePower = false;
   }
 
-  if (changeSpeed && powerValue == POWER_ON) {
+  if (changeSpeed && powerValue == POWER_ON && (lastTurnedOnAt + POWER_ON_DELAY) <= millis()) {
     if (targetSpeed != speedValue) {
       if (targetSpeed == BOOST_SPEED || speedValue == BOOST_SPEED) {
         digitalWrite(BOOST_BUTTON_PIN, HIGH);
-        delay(MICRO_WAIT);
+        delay(BUTTON_WAIT);
         digitalWrite(BOOST_BUTTON_PIN, LOW);
-        delay(MICRO_WAIT);
+        delay(BUTTON_WAIT);
         readState();
       }
 
       while (targetSpeed != speedValue) {
         digitalWrite(SPEED_BUTTON_PIN, HIGH);
-        delay(MICRO_WAIT);
+        delay(BUTTON_WAIT);
         digitalWrite(SPEED_BUTTON_PIN, LOW);
-        delay(MICRO_WAIT);
+        delay(BUTTON_WAIT);
         readState();
       }
-      
+
       zunoSendReport(SPEED_CHANNEL);
     }
 
@@ -132,14 +138,14 @@ void loop() {
 }
 
 byte getPower() {
-  Serial.print("getPower() = ");
+  Serial.print("getPower() # => ");
   Serial.println(powerValue);
 
   return powerValue;
 }
 
 byte getSpeed() {
-  Serial.print("getSpeed() = ");
+  Serial.print("getSpeed() # => ");
   Serial.println(speedValue);
 
   return speedValue;
@@ -194,4 +200,3 @@ void setSpeed(byte value) {
   changeSpeed = true;
   targetSpeed = value;
 }
-
