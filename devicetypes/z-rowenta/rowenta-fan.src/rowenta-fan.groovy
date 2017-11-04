@@ -20,7 +20,7 @@ metadata {
   }
 
   tiles(scale: 2) {
-    multiAttributeTile(name: "switch", type:"generic", width: 6, height: 4, canChangeIcon: true, decoration: "flat") {
+    multiAttributeTile(name: "switch", type:"generic", width: 6, height: 4, canChangeIcon: true) {
       tileAttribute("device.switch", key: "PRIMARY_CONTROL") {
         attributeState "off", label:"OFF", action:"switch.on", icon:"st.Appliances.appliances11", backgroundColor:"#FFFFFF", nextState:"turningOn"
         attributeState "on", label:"ON", action:"switch.off", icon:"st.Appliances.appliances11", backgroundColor:"#00A0DC", nextState:"turningOff"
@@ -30,25 +30,25 @@ metadata {
     }
 
     standardTile("low", "device.fanSpeed", width: 2, height: 2, decoration: "flat") {
-      state "not-low", label:"LOW", icon:"st.Home.home30", backgroundColor:"#FFFFFF", action:"low", nextState:"changing"
-      state "changing", label:"LOW", icon:"st.Home.home30", backgroundColor:"#99E4FF"
-      state "low", label:"LOW", icon:"st.Home.home30", backgroundColor:"#00A0DC"
+      state "not-low", label:"LOW", icon:"https://cdn.rawgit.com/samuelkadolph/z-rowenta/7e9ab608/icons/z-rowenta.low.png", backgroundColor:"#FFFFFF", action:"low", nextState:"changing"
+      state "changing", label:"LOW", icon:"https://cdn.rawgit.com/samuelkadolph/z-rowenta/7e9ab608/icons/z-rowenta.low.png", backgroundColor:"#99E4FF"
+      state "low", label:"LOW", icon:"https://cdn.rawgit.com/samuelkadolph/z-rowenta/7e9ab608/icons/z-rowenta.low.png", backgroundColor:"#00A0DC"
     }
     standardTile("medium", "device.fanSpeed", width: 2, height: 2, decoration: "flat") {
-      state "not-medium", label:"MEDIUM", backgroundColor:"#FFFFFF", action:"medium", nextState:"changing"
-      state "changing", label:"MEDIUM", backgroundColor:"#99E4FF"
-      state "medium", label:"MEDIUM", backgroundColor:"#00A0DC"
+      state "not-medium", label:"MEDIUM", icon:"https://cdn.rawgit.com/samuelkadolph/z-rowenta/7e9ab608/icons/z-rowenta.medium.png", backgroundColor:"#FFFFFF", action:"medium", nextState:"changing"
+      state "changing", label:"MEDIUM", icon:"https://cdn.rawgit.com/samuelkadolph/z-rowenta/7e9ab608/icons/z-rowenta.medium.png", backgroundColor:"#99E4FF"
+      state "medium", label:"MEDIUM", icon:"https://cdn.rawgit.com/samuelkadolph/z-rowenta/7e9ab608/icons/z-rowenta.medium.png", backgroundColor:"#00A0DC"
     }
     standardTile("high", "device.fanSpeed", width: 2, height: 2, decoration: "flat") {
-      state "not-high", label:"HIGH", backgroundColor:"#FFFFFF", action:"high", nextState:"changing"
-      state "changing", label:"HIGH", backgroundColor:"#99E4FF"
-      state "high", label:"HIGH", backgroundColor:"#00A0DC"
+      state "not-high", label:"HIGH", icon:"https://cdn.rawgit.com/samuelkadolph/z-rowenta/7e9ab608/icons/z-rowenta.high.png", backgroundColor:"#FFFFFF", action:"high", nextState:"changing"
+      state "changing", label:"HIGH", icon:"https://cdn.rawgit.com/samuelkadolph/z-rowenta/7e9ab608/icons/z-rowenta.high.png", backgroundColor:"#99E4FF"
+      state "high", label:"HIGH", icon:"https://cdn.rawgit.com/samuelkadolph/z-rowenta/7e9ab608/icons/z-rowenta.high.png", backgroundColor:"#00A0DC"
     }
 
     standardTile("boost", "device.fanSpeed", width: 2, height: 2, decoration: "flat") {
-      state "not-boost", label:"BOOST", backgroundColor:"#FFFFFF", action:"boost", nextState:"changing"
-      state "changing", label:"BOOST", backgroundColor:"#99E4FF"
-      state "boost", label:"BOOST", backgroundColor:"#00A0DC"
+      state "not-boost", label:"BOOST", icon:"https://cdn.rawgit.com/samuelkadolph/z-rowenta/7e9ab608/icons/z-rowenta.boost.png", backgroundColor:"#FFFFFF", action:"boost", nextState:"changing"
+      state "changing", label:"BOOST", icon:"https://cdn.rawgit.com/samuelkadolph/z-rowenta/7e9ab608/icons/z-rowenta.boost.png", backgroundColor:"#99E4FF"
+      state "boost", label:"BOOST", icon:"https://cdn.rawgit.com/samuelkadolph/z-rowenta/7e9ab608/icons/z-rowenta.boost.png", backgroundColor:"#00A0DC"
     }
 
     main "switch"
@@ -56,12 +56,12 @@ metadata {
   }
 }
 
-def on() {
-  return zwave.basicV1.basicSet(value: 0xFF).format()
+def boost() {
+  return zwave.switchMultilevelV3.switchMultilevelSet(value: 4).format()
 }
 
-def off() {
-  return zwave.basicV1.basicSet(value: 0x0).format()
+def high() {
+  return zwave.switchMultilevelV3.switchMultilevelSet(value: 3).format()
 }
 
 def low() {
@@ -72,12 +72,12 @@ def medium() {
   return zwave.switchMultilevelV3.switchMultilevelSet(value: 2).format()
 }
 
-def high() {
-  return zwave.switchMultilevelV3.switchMultilevelSet(value: 3).format()
+def off() {
+  return zwave.basicV1.basicSet(value: 0x0).format()
 }
 
-def boost() {
-  return zwave.switchMultilevelV3.switchMultilevelSet(value: 4).format()
+def on() {
+  return zwave.basicV1.basicSet(value: 0xFF).format()
 }
 
 def parse(String description) {
@@ -90,19 +90,24 @@ def parse(String description) {
   }
 }
 
-def zwaveEvent(physicalgraph.zwave.commands.switchbinaryv1.SwitchBinaryReport cmd) {
-  log.debug("SwitchBinaryReport value='${cmd.value}'")
+def speedToString(int value) {
+  switch(value) {
+    case 1: return "low";
+    case 2: return "medium";
+    case 3: return "high";
+    case 4: return "boost";
+    default: return null;
+  }
+}
 
-  sendEvent(name: "switch", value: (cmd.value == 0 ? "off" : "on"));
+def zwaveEvent(physicalgraph.zwave.commands.switchbinaryv1.SwitchBinaryReport cmd) {
+  def power = cmd.value == 0 ? "off" : "on";
+  log.debug("powerValue is now ${cmd.value} (${power})")
+  sendEvent(name: "switch", value: power);
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.switchmultilevelv3.SwitchMultilevelReport cmd) {
-  switch(cmd.value) {
-    case 1: sendEvent(name: "fanSpeed", value: "low"); break;
-    case 2: sendEvent(name: "fanSpeed", value: "medium"); break;
-    case 3: sendEvent(name: "fanSpeed", value: "high"); break;
-    case 4: sendEvent(name: "fanSpeed", value: "boost"); break;
-  }
-
-  log.debug("SwitchMultilevelReport value='${cmd.value}'")
+  def speed = speedToString(cmd.value);
+  log.debug("speedValue is now ${cmd.value} (${speed})");
+  sendEvent(name: "fanSpeed", value: speed);
 }
