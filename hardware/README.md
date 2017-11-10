@@ -6,6 +6,6 @@
 
 ## Designing the circuit
 
-![Fritzing Mockup](hardware/mockup.png)
+![Fritzing Mockup](mockup.png)
 
 ## Making the circuit
