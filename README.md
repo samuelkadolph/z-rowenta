@@ -8,6 +8,8 @@ Arduino IDE to [program it](https://z-uno.z-wave.me/getting-started/). The next 
 [custom handlers](http://docs.smartthings.com/en/latest/device-type-developers-guide/index.html) for any device on a
 Z-Wave (or Zigbee) network which is perfect for this project.
 
+![Completed Smart Fan Project](completed-fan.png)
+
 #### Hardware
 
 The hardware was the hardest part of this project because it involves painstaking process of mapping out an existing
