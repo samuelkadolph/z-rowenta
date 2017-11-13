@@ -7,7 +7,7 @@ later produces this diagram.
 
 The circuit isn't very complex. The top part is a
 [capacitive dropper power supply](https://en.wikipedia.org/wiki/Capacitive_power_supply) that provides 5V. My first step
-was to bump up the current capability of this circuit so I replaced the 1µF capacitor (`MC2`) with a 3.3µF one.
+was to bump up the current capability of this circuit so the 1µF capacitor (`MC2`) is replaced with a 3.3µF one.
 
 On the lower left section is the 120V section of the circuit that uses transistors to switch different windings on and
 off to achieve the 4 different speeds of this fan.
