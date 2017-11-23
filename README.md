@@ -25,7 +25,7 @@ Z-Wave network. The code for the Z-Uno is in [z-rowenta.ino](z-rowenta/z-rowenta
 #### SmartThings Device Handler
 
 After you've included the Z-Uno into your network you can sign into the
-[SmartThings website](https://graph.api.smartthings.com) and add this repo (samuelkadolph/z-rowenta) to your device
+[SmartThings website](https://graph.api.smartthings.com) and add this repo to your device
 handlers and update from the repo to get the z-rowenta device handler. And then you need to edit the
 `Z-Wave Device Multichannel` device and update the `Type` to `Rowenta Fan`. The code for device handler is in
 [rowenta-fan.groovy](devicetypes/z-rowenta/rowenta-fan.src/rowenta-fan.groovy).
