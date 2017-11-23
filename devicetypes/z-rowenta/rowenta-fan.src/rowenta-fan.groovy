@@ -92,22 +92,22 @@ def parse(String description) {
 
 def speedToString(int value) {
   switch(value) {
-    case 1: return "low";
-    case 2: return "medium";
-    case 3: return "high";
-    case 4: return "boost";
-    default: return null;
+    case 1: return "low"
+    case 2: return "medium"
+    case 3: return "high"
+    case 4: return "boost"
+    default: return null
   }
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.switchbinaryv1.SwitchBinaryReport cmd) {
-  def power = cmd.value == 0 ? "off" : "on";
+  def power = cmd.value == 0 ? "off" : "on"
   log.debug("powerValue is now ${cmd.value} (${power})")
-  sendEvent(name: "switch", value: power);
+  sendEvent(name: "switch", value: power)
 }
 
 def zwaveEvent(physicalgraph.zwave.commands.switchmultilevelv3.SwitchMultilevelReport cmd) {
-  def speed = speedToString(cmd.value);
-  log.debug("speedValue is now ${cmd.value} (${speed})");
-  sendEvent(name: "fanSpeed", value: speed);
+  def speed = speedToString(cmd.value)
+  log.debug("speedValue is now ${cmd.value} (${speed})")
+  sendEvent(name: "fanSpeed", value: speed)
 }
