@@ -9,7 +9,7 @@
 
 // Fan Power Values
 #define POWER_OFF 0
-#define POWER_ON 1
+#define POWER_ON 255
 
 // Fan Speed Values
 #define LOW_SPEED 1
@@ -77,7 +77,7 @@ void loop() {
     Serial.print("powerValue is now ");
     switch(powerValue) {
       case POWER_OFF: Serial.println("0 (OFF)"); break;
-      case POWER_ON: Serial.println("1 (ON)"); break;
+      case POWER_ON: Serial.println("255 (ON)"); break;
     }
 
     if (powerValue == POWER_ON) {
